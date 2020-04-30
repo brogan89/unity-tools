@@ -16,15 +16,17 @@ namespace UnityTools
 		{
 			var manifest = GetPackageManifest();
 			var packagePath = manifest["dependencies"][packageName]?.ToString();
-			path = !string.IsNullOrEmpty(packagePath) ? packagePath.Replace("file:", "") : null;
+			
+			path = !string.IsNullOrEmpty(packagePath) && packagePath.StartsWith("file:") 
+				? packagePath.Replace("file:", "")
+				: null;
+			
 			return !string.IsNullOrEmpty(path);
 		}
 		
 		public static bool IsEditingPackage(string packageName)
 		{
-			var manifest = GetPackageManifest();
-			var packagePath = manifest["dependencies"][packageName]?.ToString();
-			return !string.IsNullOrEmpty(packagePath) && packagePath.StartsWith("file:");
+			return TryGetEditingPath(packageName, out _);
 		}
 
 		#region Math
