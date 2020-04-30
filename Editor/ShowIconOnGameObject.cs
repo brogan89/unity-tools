@@ -15,7 +15,7 @@ namespace UnityToolsEditor
 		{
 			var bytes = Utils.TryGetEditingPath(Config.PACKAGE_NAME, out var editingPath) 
 				? File.ReadAllBytes($"{editingPath}/Resources/c.png")
-				: File.ReadAllBytes("Package/Resources/c.png");
+				: File.ReadAllBytes("Packages/Resources/c.png");
 			
 			Icon = new Texture2D(1, 1);
 			Icon.LoadImage(bytes);
