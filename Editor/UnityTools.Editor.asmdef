@@ -1,6 +1,8 @@
 {
     "name": "UnityTools.Editor",
-    "references": [],
+    "references": [
+        "GUID:5934e0945d35bba4ea0fe4d1eee8473b"
+    ],
     "includePlatforms": [
         "Editor"
     ],

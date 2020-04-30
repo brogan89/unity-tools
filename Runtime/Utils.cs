@@ -1,9 +1,32 @@
+using System.IO;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace UnityTools
 {
 	public static class Utils
 	{
+		public static JObject GetPackageManifest()
+		{
+			var text = File.ReadAllText("Packages/manifest.json");
+			return JObject.Parse(text);
+		}
+
+		public static bool TryGetEditingPath(string packageName, out string path)
+		{
+			var manifest = GetPackageManifest();
+			var packagePath = manifest["dependencies"][packageName]?.ToString();
+			path = !string.IsNullOrEmpty(packagePath) ? packagePath.Replace("file:", "") : null;
+			return !string.IsNullOrEmpty(path);
+		}
+		
+		public static bool IsEditingPackage(string packageName)
+		{
+			var manifest = GetPackageManifest();
+			var packagePath = manifest["dependencies"][packageName]?.ToString();
+			return !string.IsNullOrEmpty(packagePath) && packagePath.StartsWith("file:");
+		}
+
 		#region Math
 
 		public static float GetPercentage(float min, float max, float input)
@@ -32,7 +55,6 @@ namespace UnityTools
 
 		#endregion
 
-	
 		#region Gizmos
 		
 		/// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using UnityEditor;
 using UnityEngine;
+using UnityTools;
 
 namespace UnityToolsEditor
 {
@@ -8,11 +9,14 @@ namespace UnityToolsEditor
 	public class ShowIconOnGameObject
 	{
 		private static readonly Texture2D Icon;
-		private const float WIDTH = 15;
+		private const float WIDTH = 25;
 
 		static ShowIconOnGameObject()
 		{
-			var bytes = File.ReadAllBytes(@"C:\Users\brogan\Documents\GitHub\unity-tools\Resources\c.png");
+			var bytes = Utils.TryGetEditingPath(Config.PACKAGE_NAME, out var editingPath) 
+				? File.ReadAllBytes($"{editingPath}/Resources/c.png")
+				: File.ReadAllBytes("Package/Resources/c.png");
+			
 			Icon = new Texture2D(1, 1);
 			Icon.LoadImage(bytes);
 			Icon.Apply();
@@ -26,10 +30,12 @@ namespace UnityToolsEditor
 				return;
 
 			GameObject gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+			
 			if (gameObject == null)
 				return;
 
 			var script = gameObject.GetComponent<MonoBehaviour>(); // can change this to any type
+			
 			if (!script)
 				return;
 
