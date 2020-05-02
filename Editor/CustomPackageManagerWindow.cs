@@ -97,6 +97,7 @@ namespace UnityToolsEditor
 						pkg.isEditing = isEditing;
 						Debug.Log($"Toggle editing: {pkg.isEditing}");
 						PackageManagerUtils.SetPackageValue(pkg.name, pkg.isEditing ? $"file:{pkg.localPath}" : pkg.url);
+						AssetDatabase.Refresh();
 						RefreshPackages();
 					}
 				}

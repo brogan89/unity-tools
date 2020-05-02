@@ -11,6 +11,7 @@
   ],
   "category": "Tools",
   "dependencies": {
+    "com.marijnz.unity-toolbar-extender": "1.0.0"
   },
   "relatedPackages": {},
   "repository": {
