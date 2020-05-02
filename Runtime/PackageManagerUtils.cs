@@ -59,7 +59,7 @@ namespace UnityTools
 
 		public static string GetSavedLocalPath(string packageName)
 		{
-			var path = !File.Exists(CustomPackagePath) ? null : CustomPackages[packageName].ToString();
+			var path = !File.Exists(CustomPackagePath) && CustomPackages != null ? null : CustomPackages[packageName]?.ToString();
 			
 			Debug.Log(!string.IsNullOrEmpty(path)
 				? $"Saving local path. <b>{packageName}: {path}</b>"
