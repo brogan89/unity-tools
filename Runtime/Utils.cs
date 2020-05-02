@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -6,30 +8,6 @@ namespace UnityTools
 {
 	public static class Utils
 	{
-		private static JObject _manifest;
-		private static JObject Manifest => _manifest ?? (_manifest = JObject.Parse(File.ReadAllText("Packages/manifest.json")));
-
-		public static bool TryGetEditingPath(string packageName, out string path)
-		{
-			var packagePath = Manifest["dependencies"][packageName]?.ToString();
-			
-			path = !string.IsNullOrEmpty(packagePath) && packagePath.StartsWith("file:") 
-				? packagePath.Replace("file:", "")
-				: null;
-			
-			return !string.IsNullOrEmpty(path);
-		}
-		
-		public static bool IsEditingPackage(string packageName)
-		{
-			return TryGetEditingPath(packageName, out _);
-		}
-
-		public static string GetSHA1(string packageName)
-		{
-			return IsEditingPackage(packageName) ? null : Manifest["lock"][packageName]["hash"].ToString();
-		}
-
 		#region Math
 
 		public static float GetPercentage(float min, float max, float input)

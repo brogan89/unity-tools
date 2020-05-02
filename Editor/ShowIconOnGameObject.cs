@@ -13,9 +13,9 @@ namespace UnityToolsEditor
 
 		static ShowIconOnGameObject()
 		{
-			var bytes = Utils.TryGetEditingPath(Config.PACKAGE_NAME, out var editingPath)
+			var bytes = PackageManagerUtils.TryGetEditingPath(Config.PACKAGE_NAME, out var editingPath)
 				? File.ReadAllBytes($"{editingPath}/Resources/c.png")
-				: File.ReadAllBytes($"Library/PackageCache/{Config.PACKAGE_NAME}@{Utils.GetSHA1(Config.PACKAGE_NAME).Substring(0, 10)}/Resources/c.png");
+				: File.ReadAllBytes($"{PackageManagerUtils.GetCachedPackagePath(Config.PACKAGE_NAME)}/Resources/c.png");
 			
 			Icon = new Texture2D(1, 1);
 			Icon.LoadImage(bytes);
