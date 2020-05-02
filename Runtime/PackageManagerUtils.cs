@@ -25,7 +25,7 @@ namespace UnityTools
 			
 			return !string.IsNullOrEmpty(path);
 		}
-		
+
 		public static bool IsEditingPackage(string packageName)
 		{
 			return TryGetEditingPath(packageName, out _);
@@ -33,7 +33,7 @@ namespace UnityTools
 
 		public static string GetSHA1(string packageName)
 		{
-			return IsEditingPackage(packageName) ? null : Manifest["lock"][packageName]["hash"].ToString();
+			return IsEditingPackage(packageName) ? null	: Manifest?["lock"]?[packageName]?["hash"]?.ToString();
 		}
 
 		public static void SetPackageValue(string packageName, string value)
@@ -71,7 +71,12 @@ namespace UnityTools
 		public static string GetCachedPackagePath(string packageName)
 		{
 			if (!IsEditingPackage(packageName))
-				return $"Library/PackageCache/{packageName}@{GetSHA1(packageName).Substring(0, 10)}";
+			{
+				var sha = GetSHA1(packageName)?.Substring(0, 10);
+				if (string.IsNullOrEmpty(sha))
+					return $"Library/PackageCache/{packageName}@{sha}";
+				return null;
+			}
 			
 			Debug.LogError($"Package '{packageName}' is in edit mode. Use package local path");
 			return null;
