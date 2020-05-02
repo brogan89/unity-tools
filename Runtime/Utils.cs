@@ -6,16 +6,12 @@ namespace UnityTools
 {
 	public static class Utils
 	{
-		public static JObject GetPackageManifest()
-		{
-			var text = File.ReadAllText("Packages/manifest.json");
-			return JObject.Parse(text);
-		}
+		private static JObject _manifest;
+		private static JObject Manifest => _manifest ?? (_manifest = JObject.Parse(File.ReadAllText("Packages/manifest.json")));
 
 		public static bool TryGetEditingPath(string packageName, out string path)
 		{
-			var manifest = GetPackageManifest();
-			var packagePath = manifest["dependencies"][packageName]?.ToString();
+			var packagePath = Manifest["dependencies"][packageName]?.ToString();
 			
 			path = !string.IsNullOrEmpty(packagePath) && packagePath.StartsWith("file:") 
 				? packagePath.Replace("file:", "")
@@ -27,6 +23,11 @@ namespace UnityTools
 		public static bool IsEditingPackage(string packageName)
 		{
 			return TryGetEditingPath(packageName, out _);
+		}
+
+		public static string GetSHA1(string packageName)
+		{
+			return IsEditingPackage(packageName) ? null : Manifest["lock"][packageName]["hash"].ToString();
 		}
 
 		#region Math
