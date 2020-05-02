@@ -42,6 +42,12 @@ namespace UnityToolsEditor
 
 		private void OnGUI()
 		{
+			if (packages == null)
+			{
+				RefreshPackages();
+				return;
+			}
+
 			GUILayout.Label("Custom Packages", EditorStyles.boldLabel);
 
 			// create new
@@ -132,8 +138,17 @@ namespace UnityToolsEditor
 					url = path;
 					localPath = PackageManagerUtils.GetSavedLocalPath(name);
 
-					var packageJson = JObject.Parse(File.ReadAllText($"{PackageManagerUtils.GetCachedPackagePath(name)}/package.json"));
-					version = packageJson["version"].ToString();
+					try
+					{
+						var cachedPath = PackageManagerUtils.GetCachedPackagePath(name);
+						var jsonText = File.ReadAllText($"{cachedPath}/package.json");
+						var packageJson = JObject.Parse(jsonText);
+						version = packageJson["version"].ToString();
+					}
+					catch(Exception e)
+					{
+						Debug.LogError(e);
+					}
 				}
 			}
 

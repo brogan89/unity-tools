@@ -33,7 +33,10 @@ namespace UnityTools
 
 		public static string GetSHA1(string packageName)
 		{
-			return IsEditingPackage(packageName) ? null	: Manifest?["lock"]?[packageName]?["hash"]?.ToString();
+			if (IsEditingPackage(packageName))
+				return null;
+			
+			return Manifest?["lock"]?[packageName]?["hash"]?.ToString();
 		}
 
 		public static void SetPackageValue(string packageName, string value)
@@ -73,7 +76,7 @@ namespace UnityTools
 			if (!IsEditingPackage(packageName))
 			{
 				var sha = GetSHA1(packageName)?.Substring(0, 10);
-				if (string.IsNullOrEmpty(sha))
+				if (!string.IsNullOrEmpty(sha))
 					return $"Library/PackageCache/{packageName}@{sha}";
 				return null;
 			}
