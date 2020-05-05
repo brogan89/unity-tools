@@ -1,53 +1,43 @@
-﻿using System.IO;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-using UnityTools;
 
 namespace UnityToolsEditor
 {
 	[InitializeOnLoad]
 	public class ShowIconOnGameObject
 	{
-		private static readonly Texture2D Icon;
-		private const float WIDTH = 25;
-
 		static ShowIconOnGameObject()
 		{
-			var bytes = PackageManagerUtils.TryGetEditingPath(Config.PACKAGE_NAME, out var editingPath)
-				? File.ReadAllBytes($"{editingPath}/Resources/c.png")
-				: File.ReadAllBytes($"{PackageManagerUtils.GetCachedPackagePath(Config.PACKAGE_NAME)}/Resources/c.png");
-			
-			Icon = new Texture2D(1, 1);
-			Icon.LoadImage(bytes);
-			Icon.Apply();
-			
 			EditorApplication.hierarchyWindowItemOnGUI += DrawIconOnWindowItem;
 		}
 
 		private static void DrawIconOnWindowItem(int instanceID, Rect rect)
 		{
-			if (Icon == null)
-				return;
-
-			GameObject gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+			var gameObject = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
 			
 			if (gameObject == null)
 				return;
 
-			var script = gameObject.GetComponent<MonoBehaviour>(); // can change this to any type
+			if (!gameObject.TryGetComponent<MonoBehaviour>(out var script))
+				return;
 			
-			if (!script)
+			if (IsUnityScript(script))
 				return;
 
 			var r = new Rect(
-				rect.xMax - WIDTH,
+				rect.xMax - 25,
 				rect.yMin,
 				rect.width,
 				rect.height);
 
-			GUI.color = Color.cyan;
-			GUI.Label(r, Icon);
-			GUI.color = Color.white;
+			GUI.Label(r, EditorGUIUtility.IconContent("d_cs Script Icon"));
+		}
+
+		private static bool IsUnityScript(MonoBehaviour script)
+		{
+			// conditions
+			var nameSpace = script.GetType().Namespace;
+			return !string.IsNullOrEmpty(nameSpace) && (nameSpace.Contains("UnityEngine") || nameSpace.Contains("UnityEditor"));
 		}
 	}
 }

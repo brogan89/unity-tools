@@ -1,7 +1,7 @@
 {
   "name": "com.brogan89.unity-tools",
   "displayName": "Unity Tools",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "unity": "2019.1",
   "description": "A collection scripts that are useful for Unity",
   "keywords": [
@@ -9,9 +9,5 @@
     "Helpers",
     "Utility"
   ],
-  "category": "Tools",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/brogan89/unity-tools.git"
-  }
+  "category": "Tools"
 }
