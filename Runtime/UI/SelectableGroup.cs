@@ -138,10 +138,7 @@ namespace UnityTools.UI
 			public ColorBlock colorBlock = ColorBlock.defaultColorBlock;
 
 			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public Sprite normalSprite;
-			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public Sprite highlightedSprite;
-			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public Sprite pressedSprite;
-			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public Sprite selectedSprite;
-			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public Sprite disabledSprite;
+			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public SpriteState spriteState;
 			
 			public void Normal()
 			{
@@ -174,7 +171,7 @@ namespace UnityTools.UI
 						break;
 					case Selectable.Transition.SpriteSwap:
 						if (targetGraphic is Image image)
-							image.sprite = selectedSprite;
+							image.sprite = spriteState.selectedSprite;
 						break;
 					case Selectable.Transition.Animation:
 						break;
@@ -194,7 +191,7 @@ namespace UnityTools.UI
 						break;
 					case Selectable.Transition.SpriteSwap:
 						if (targetGraphic is Image image)
-							image.sprite = highlightedSprite;
+							image.sprite = spriteState.highlightedSprite;
 						break;
 					case Selectable.Transition.Animation:
 						break;
@@ -214,7 +211,7 @@ namespace UnityTools.UI
 						break;
 					case Selectable.Transition.SpriteSwap:
 						if (targetGraphic is Image image)
-							image.sprite = pressedSprite;
+							image.sprite = spriteState.pressedSprite;
 						break;
 					case Selectable.Transition.Animation:
 						break;
@@ -234,7 +231,7 @@ namespace UnityTools.UI
 						break;
 					case Selectable.Transition.SpriteSwap:
 						if (targetGraphic is Image image)
-							image.sprite = disabledSprite;
+							image.sprite = spriteState.disabledSprite;
 						break;
 					case Selectable.Transition.Animation:
 						break;

@@ -1,7 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace UnityTools
@@ -37,13 +33,14 @@ namespace UnityTools
 		#endregion
 
 		#region Gizmos
-		
+
 		/// <summary>
 		/// Draws a circle around center point.
 		/// Ensure you call from OnDrawGizmos()
 		/// </summary>
 		/// <param name="centerPosition"></param>
 		/// <param name="radius"></param>
+		/// <param name="colour"></param>
 		public static void DrawCircleGizmo2D(Vector3 centerPosition, float radius, Color colour = default)
 		{
 			if (colour == default)
