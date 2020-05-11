@@ -1,39 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace UnityTools
 {
-	public static class Utils
+	public static class GizmosEx
 	{
-		#region Math
-
-		public static float GetPercentage(float min, float max, float input)
-		{
-			return (input - min) / (max - min);
-		}
-
-		public static Vector3 RandomVector3(Vector3 min, Vector3 max)
-		{
-			return new Vector3
-			{
-				x = Random.Range(min.x, max.x),
-				y = Random.Range(min.y, max.y),
-				z = Random.Range(min.z, max.z)
-			};
-		}
-
-		public static Vector2 RandomVector2(Vector2 min, Vector2 max)
-		{
-			return new Vector3
-			{
-				x = Random.Range(min.x, max.x),
-				y = Random.Range(min.y, max.y)
-			};
-		}
-
-		#endregion
-
-		#region Gizmos
-
 		/// <summary>
 		/// Draws a circle around center point.
 		/// Ensure you call from OnDrawGizmos()
@@ -68,7 +38,5 @@ namespace UnityTools
 			Gizmos.DrawLine(pos, lastPos);
 			Gizmos.color = Color.white; // return to white
 		}
-
-		#endregion
 	}
 }
