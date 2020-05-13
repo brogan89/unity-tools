@@ -21,7 +21,7 @@ namespace UnityToolsEditor
 			if (!gameObject.TryGetComponent<MonoBehaviour>(out var script))
 				return;
 			
-			if (IsUnityScript(script))
+			if (!IsCustomScript(script))
 				return;
 
 			var r = new Rect(
@@ -33,11 +33,15 @@ namespace UnityToolsEditor
 			GUI.Label(r, EditorGUIUtility.IconContent("d_cs Script Icon"));
 		}
 
-		private static bool IsUnityScript(MonoBehaviour script)
+		private static bool IsCustomScript(MonoBehaviour script)
 		{
 			// conditions
 			var nameSpace = script.GetType().Namespace;
-			return !string.IsNullOrEmpty(nameSpace) && (nameSpace.Contains("UnityEngine") || nameSpace.Contains("UnityEditor"));
+
+			if (string.IsNullOrEmpty(nameSpace))
+				return true;
+			
+			return !nameSpace.Contains("UnityEngine") && !nameSpace.Contains("TMPro");
 		}
 	}
 }
