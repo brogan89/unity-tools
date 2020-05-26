@@ -90,6 +90,12 @@ namespace UnityTools.MessageSystem
 
 		public static void Publish<T>(T eventMessage) where T : IMessage
 		{
+			if (eventMessage == null)
+			{
+				Debug.LogError($"{nameof(eventMessage)} is null. Publish failed.");
+				return;
+			}
+			
 			var type = typeof(T);
 			if (!Subscribers.ContainsKey(type))
 				return;
