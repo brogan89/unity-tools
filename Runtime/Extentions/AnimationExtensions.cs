@@ -9,5 +9,10 @@ namespace UnityTools.Extensions
 		{
 			return animator.runtimeAnimatorController.animationClips.Any(x => x.name == animationName);
 		}
+
+		public static AnimationClip GetAnimationClip(this Animator animator, string animationName)
+		{
+			return animator.runtimeAnimatorController.animationClips.FirstOrDefault(x => x.name == animationName);
+		}
 	}
 }
