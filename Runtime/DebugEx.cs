@@ -21,7 +21,7 @@ namespace UnityTools
 			[CallerLineNumber] int sourceLineNumber = 0)
 		{
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-			var logMessage = PrepareLogMessage(message.ToString(), color, sourceFilePath, memberName, sourceLineNumber);
+			var logMessage = PrepareLogMessage(message?.ToString(), color, sourceFilePath, memberName, sourceLineNumber);
 			Debug.Log(logMessage);
 #endif
 		}
@@ -34,7 +34,7 @@ namespace UnityTools
 			[CallerLineNumber] int sourceLineNumber = 0)
 		{
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-			var logMessage = PrepareLogMessage(message.ToString(), color, sourceFilePath, memberName, sourceLineNumber);
+			var logMessage = PrepareLogMessage(message?.ToString(), color, sourceFilePath, memberName, sourceLineNumber);
 			Debug.Log(logMessage, context);
 #endif
 		}
