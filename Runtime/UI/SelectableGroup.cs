@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -127,6 +126,7 @@ namespace UnityTools.UI
 			}
 		}
 
+		//TODO: create a PropertyDrawer
 		[Serializable]
 		public class TargetInfo
 		{
@@ -134,11 +134,12 @@ namespace UnityTools.UI
 			
 			public Selectable.Transition transition = Selectable.Transition.ColorTint;
 			
-			[ShowIf(nameof(transition), Selectable.Transition.ColorTint)]
+			[Header("ColorTint Only")]
 			public ColorBlock colorBlock = ColorBlock.defaultColorBlock;
 
-			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public Sprite normalSprite;
-			[ShowIf(nameof(transition), Selectable.Transition.SpriteSwap)] public SpriteState spriteState;
+			[Header("SpriteSwap Only")]
+			public Sprite normalSprite;
+			public SpriteState spriteState;
 			
 			public void Normal()
 			{
