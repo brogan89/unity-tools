@@ -1,7 +1,7 @@
 {
   "name": "com.brogan89.unity-tools",
   "displayName": "Unity Tools",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "unity": "2019.1",
   "description": "A collection scripts that are useful for Unity",
   "keywords": [
