@@ -1,6 +1,6 @@
 # Unity Tools
 
-Collection of scripts that are useful for Unity projects
+Collection of common scripts that I use for my Unity projects. Feel free to use them too.
 
 # Features
 - Extension Methods - A collection of various useful extension methods
