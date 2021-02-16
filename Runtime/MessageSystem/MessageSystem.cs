@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityTools.Extensions;
 
 namespace UnityTools.MessageSystem
 {
@@ -128,7 +129,7 @@ namespace UnityTools.MessageSystem
 		{
 			if (eventMessage == null)
 			{
-				Debug.LogError($"{nameof(eventMessage)} is null. Publish failed.");
+				DebugEx.LogError($"{DebugEx.Icons.Phone} {nameof(eventMessage)} is null. Publish failed.");
 				return;
 			}
 			
@@ -141,6 +142,8 @@ namespace UnityTools.MessageSystem
 			Subscribers[type].RemoveAll(x => !x.caller);
 			
 			var subs = Subscribers[type];
+			
+			DebugEx.Log($"Publishing event: {type.Name}. subs: {subs.Select(x => x.caller ? x.caller.name : "").ToArrayString()}", prefix: DebugEx.Icons.Phone);
 
 			// invoke callbacks
 			foreach (var sub in subs)
