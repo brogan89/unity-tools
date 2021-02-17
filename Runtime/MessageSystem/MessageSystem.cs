@@ -30,11 +30,6 @@ namespace UnityTools.MessageSystem
 			/// The callback for the published event
 			/// </summary>
 			public Delegate callback;
-			
-			/// <summary>
-			/// If true will only invoke callback if caller if enabled
-			/// </summary>
-			public bool enabledOnly;
 		}
 
 		private static readonly Dictionary<Type, List<Subscriber>> Subscribers = new Dictionary<Type, List<Subscriber>>();
@@ -46,11 +41,10 @@ namespace UnityTools.MessageSystem
 		/// </summary>
 		/// <param name="caller"></param>
 		/// <param name="callback"></param>
-		/// <param name="enabledOnly">Only invoke callback if MonoBehaviour is enabled</param>
 		/// <typeparam name="T"></typeparam>
-		public static void Subscribe<T>(MonoBehaviour caller, Action callback, bool enabledOnly = false) where T : IMessage
+		public static void Subscribe<T>(MonoBehaviour caller, Action callback) where T : IMessage
 		{
-			AddSubscriber<T>(caller, callback, enabledOnly);
+			AddSubscriber<T>(caller, callback);
 		}
 
 		/// <summary>
@@ -58,21 +52,22 @@ namespace UnityTools.MessageSystem
 		/// </summary>
 		/// <param name="caller"></param>
 		/// <param name="callback"></param>
-		/// <param name="enabledOnly">Only invoke callback if MonoBehaviour is enabled</param>
 		/// <typeparam name="T"></typeparam>
-		public static void Subscribe<T>(MonoBehaviour caller, Action<T> callback, bool enabledOnly = false) where T : IMessage
+		public static void Subscribe<T>(MonoBehaviour caller, Action<T> callback) where T : IMessage
 		{
-			AddSubscriber<T>(caller, callback, enabledOnly);
+			AddSubscriber<T>(caller, callback);
 		}
 
-		private static void AddSubscriber<T>(MonoBehaviour caller, Delegate callback, bool enabledOnly) where T : IMessage
+		private static void AddSubscriber<T>(MonoBehaviour caller, Delegate callback) where T : IMessage
 		{
 			var type = typeof(T);
+			
 			if (!Subscribers.ContainsKey(type))
 				Subscribers[type] = new List<Subscriber>();
 
 			// skip if double up
 			var subs = Subscribers[type];
+			
 			foreach (var sub in subs)
 			{
 				if (sub.caller != caller || sub.callback != callback)
@@ -87,7 +82,6 @@ namespace UnityTools.MessageSystem
 			{
 				caller = caller,
 				callback = callback,
-				enabledOnly = enabledOnly
 			};
 			
 			Subscribers[type].Add(newSub);
@@ -110,12 +104,17 @@ namespace UnityTools.MessageSystem
 		private static void RemoveSubscriber<T>(MonoBehaviour caller, Delegate callback) where T : IMessage
 		{
 			var type = typeof(T);
+			
 			if (!Subscribers.TryGetValue(type, out var subsList))
 				return;
 
-			var item = subsList.FirstOrDefault(x => ReferenceEquals(x.caller, caller) && ReferenceEquals(x.callback, callback));
+			var item = subsList.FirstOrDefault(x => x.caller == caller && x.callback == callback);
+			
 			if (item.caller)
+			{
+				// DebugEx.Log($"Removing sub from {type.Name} : {item.caller}", prefix: DebugEx.Icons.Phone);
 				Subscribers[type].Remove(item);
+			}
 		}
 
 		#endregion
@@ -129,7 +128,7 @@ namespace UnityTools.MessageSystem
 		{
 			if (eventMessage == null)
 			{
-				DebugEx.LogError($"{DebugEx.Icons.Phone} {nameof(eventMessage)} is null. Publish failed.");
+				DebugEx.LogError($"{nameof(eventMessage)} is null. Publish failed.", prefix: DebugEx.Icons.Phone);
 				return;
 			}
 			
@@ -149,7 +148,7 @@ namespace UnityTools.MessageSystem
 			foreach (var sub in subs)
 			{
 				// skip if caller is disabled
-				if (sub.enabledOnly && !sub.caller.enabled)
+				if (!sub.caller.enabled)
 					continue;
 				
 				if(sub.callback.Method.GetParameters().Length > 0)
