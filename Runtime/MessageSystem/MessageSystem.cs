@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityTools.Extensions;
 
 namespace UnityTools.MessageSystem
 {
@@ -12,150 +10,72 @@ namespace UnityTools.MessageSystem
 	public interface IMessage { }
 
 	/// <summary>
+	/// Base subscriber interface
+	/// </summary>
+	public interface ISubscriber { }
+	
+	/// <summary>
+	/// Subscriber interface which provides the callback method
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public interface ISubscriber<in T> : ISubscriber where T : IMessage
+	{
+		void OnPublished(T message);
+	}
+
+	/// <summary>
 	/// A simple implementation of Event Bus system
 	/// </summary>
 	public static class EventMessage
 	{
 		/// <summary>
-		/// Subscriber data
+		/// List of subscribers
 		/// </summary>
-		private struct Subscriber
-		{
-			/// <summary>
-			/// The script which the event has been subscribed
-			/// </summary>
-			public MonoBehaviour caller;
-			
-			/// <summary>
-			/// The callback for the published event
-			/// </summary>
-			public Delegate callback;
-		}
-
-		private static readonly Dictionary<Type, List<Subscriber>> Subscribers = new Dictionary<Type, List<Subscriber>>();
-
-		#region Subscribe
+		private static readonly List<ISubscriber> _Subs = new List<ISubscriber>();
 
 		/// <summary>
-		/// Subscribe a callback to an event
+		/// Subscribe to ISubscriber callbacks
 		/// </summary>
-		/// <param name="caller"></param>
-		/// <param name="callback"></param>
-		/// <typeparam name="T"></typeparam>
-		public static void Subscribe<T>(MonoBehaviour caller, Action callback) where T : IMessage
+		/// <param name="sub"></param>
+		public static void Sub(ISubscriber sub)
 		{
-			AddSubscriber<T>(caller, callback);
+			if (!_Subs.Contains(sub))
+				_Subs.Add(sub);
 		}
-
-		/// <summary>
-		/// Subscribe a callback to an event
-		/// </summary>
-		/// <param name="caller"></param>
-		/// <param name="callback"></param>
-		/// <typeparam name="T"></typeparam>
-		public static void Subscribe<T>(MonoBehaviour caller, Action<T> callback) where T : IMessage
-		{
-			AddSubscriber<T>(caller, callback);
-		}
-
-		private static void AddSubscriber<T>(MonoBehaviour caller, Delegate callback) where T : IMessage
-		{
-			var type = typeof(T);
-			
-			if (!Subscribers.ContainsKey(type))
-				Subscribers[type] = new List<Subscriber>();
-
-			// skip if double up
-			var subs = Subscribers[type];
-			
-			foreach (var sub in subs)
-			{
-				if (sub.caller != caller || sub.callback != callback)
-					continue;
-
-				Debug.LogWarning($"Event has already been subscribed ({typeof(T)}). caller: {caller}. callback: {callback}");
-				return;
-			}
-
-			// add new subscriber
-			var newSub = new Subscriber
-			{
-				caller = caller,
-				callback = callback,
-			};
-			
-			Subscribers[type].Add(newSub);
-		}
-
-		#endregion
-
-		#region Unsubscribe
-
-		public static void Unsubscribe<T>(MonoBehaviour caller, Action callback) where T : IMessage
-		{
-			RemoveSubscriber<T>(caller, callback);
-		}
-
-		public static void Unsubscribe<T>(MonoBehaviour caller, Action<T> callback) where T : IMessage
-		{
-			RemoveSubscriber<T>(caller, callback);
-		}
-
-		private static void RemoveSubscriber<T>(MonoBehaviour caller, Delegate callback) where T : IMessage
-		{
-			var type = typeof(T);
-			
-			if (!Subscribers.TryGetValue(type, out var subsList))
-				return;
-
-			var item = subsList.FirstOrDefault(x => x.caller == caller && x.callback == callback);
-			
-			if (item.caller)
-			{
-				// DebugEx.Log($"Removing sub from {type.Name} : {item.caller}", prefix: DebugEx.Icons.Phone);
-				Subscribers[type].Remove(item);
-			}
-		}
-
-		#endregion
 		
-		public static void Publish<T>() where T : IMessage
+		/// <summary>
+		/// Subscribe to ISubscriber callbacks
+		/// </summary>
+		/// <param name="sub"></param>
+		public static void Unsub(ISubscriber sub)
 		{
-			Publish(Activator.CreateInstance<T>());
+			_Subs.Remove(sub);
 		}
 
+		/// <summary>
+		/// Bind subscriber to MonoBehaviour.
+		/// This will add a script to the GameObject which in turn will sub/unsub in its OnEnable/OnDisable methods
+		/// </summary>
+		/// <param name="sub"></param>
+		public static void Bind(MonoBehaviour sub)
+		{
+			sub.gameObject.AddComponent<SubscriberBinder>().Bind(sub as ISubscriber);
+		}
+
+		/// <summary>
+		/// Publishes event to all subscribers
+		/// </summary>
+		/// <param name="eventMessage"></param>
+		/// <typeparam name="T"></typeparam>
 		public static void Publish<T>(T eventMessage) where T : IMessage
 		{
 			if (eventMessage == null)
-			{
-				DebugEx.LogError($"{nameof(eventMessage)} is null. Publish failed.", prefix: DebugEx.Icons.Phone);
-				return;
-			}
-			
-			var type = typeof(T);
-			
-			if (!Subscribers.ContainsKey(type))
-				return;
+				throw new NullReferenceException($"{nameof(eventMessage)} is null. Publish failed");
 
-			// filter subscribers - removers all null callers
-			Subscribers[type].RemoveAll(x => !x.caller);
-			
-			var subs = Subscribers[type];
-			
-			DebugEx.Log($"Publishing event: {type.Name}. subs: {subs.Select(x => x.caller ? x.caller.name : "").ToArrayString()}", prefix: DebugEx.Icons.Phone);
-
-			// invoke callbacks
-			foreach (var sub in subs)
-			{
-				// skip if caller is disabled
-				if (!sub.caller.enabled)
-					continue;
-				
-				if(sub.callback.Method.GetParameters().Length > 0)
-					sub.callback.DynamicInvoke(eventMessage);
-				else
-					sub.callback.DynamicInvoke();
-			}
+			// make a copy as subs may be removed from the OnPublished callback
+			foreach (var sub in _Subs.ToArray()) 
+				if (sub is ISubscriber<T> s)
+					s.OnPublished(eventMessage);
 		}
 	}
 }
