@@ -10,9 +10,9 @@ namespace UnityTools
 	public class Debounce
 	{
 		private readonly MonoBehaviour _monoBehaviour;
-		private readonly float _debounceTime;
 		private readonly Action _callback;
 
+		private float _debounceTime;
 		private float _currentTime;
 		private bool _isTriggered;
 
@@ -23,6 +23,11 @@ namespace UnityTools
 			_callback = callback;
 			_isTriggered = true;
 			_monoBehaviour.StartCoroutine(Tick());
+		}
+
+		public void SetTime(float value)
+		{
+			_debounceTime = value;
 		}
 		
 		private IEnumerator Tick()
