@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 
@@ -45,6 +46,36 @@ namespace UnityTools.Extensions
 		{
 			return ColorToHex((Color32) color, startHash);
 		}
+		
+		public static Color HexToColor(this string hex)
+		{
+			if (string.IsNullOrEmpty(hex))
+			{
+				Debug.LogError("Hex string is null");
+				return Color.white;
+			}
+
+			hex = hex.TrimStart('#');
+
+			if (hex.Length < 6 || hex.Length > 8)
+			{
+				Debug.LogError("Hex string has wrong format. Must be #FF00AA");
+				return Color.white;
+			}
+
+			var r = byte.Parse(hex.Substring(0, 2), NumberStyles.HexNumber);
+			var g = byte.Parse(hex.Substring(2, 2), NumberStyles.HexNumber);
+			var b = byte.Parse(hex.Substring(4, 2), NumberStyles.HexNumber);
+
+			if (hex.Length == 8)
+			{
+				var a = byte.Parse(hex.Substring(6, 2), NumberStyles.HexNumber);
+				return new Color32(r, g, b, a);
+			}
+
+			return new Color32(r, g, b, 255);
+		}
+
 
 		/// <summary>
 		/// returns [frame: {Time.frameCount}]
