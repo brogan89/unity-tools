@@ -52,6 +52,12 @@ namespace UnityTools.UI
 			_selectable = GetComponent<Selectable>();
 		}
 
+		private void OnEnable()
+		{
+			if (EventSystem.current.currentSelectedGameObject != gameObject)
+				OnDeselect(null);
+		}
+
 		public void OnSelect(BaseEventData eventData)
 		{
 			_hasSelection = true;
