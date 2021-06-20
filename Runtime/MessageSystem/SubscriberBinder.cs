@@ -4,7 +4,7 @@ namespace UnityTools.MessageSystem
 {
 	public class SubscriberBinder : MonoBehaviour
 	{
-		private ISubscriber _sub;
+		private MonoBehaviour _sub;
 
 		private void OnEnable()
 		{
@@ -16,7 +16,7 @@ namespace UnityTools.MessageSystem
 			Unsub();
 		}
 
-		public void Bind(ISubscriber sub)
+		public void Bind(MonoBehaviour sub)
 		{
 			_sub = sub;
 			Sub();
@@ -24,14 +24,13 @@ namespace UnityTools.MessageSystem
 
 		private void Sub()
 		{
-			if (_sub != null)
-				EventMessage.Sub(_sub);
+			if (_sub)
+				EventMessage.Sub(_sub as ISubscriber);
 		}
 
 		private void Unsub()
 		{
-			if (_sub != null)
-				EventMessage.Unsub(_sub);
+			EventMessage.Unsub(_sub as ISubscriber);
 		}
 	}
 }

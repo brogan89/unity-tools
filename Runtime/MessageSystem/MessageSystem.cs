@@ -59,7 +59,7 @@ namespace UnityTools.MessageSystem
 		/// <param name="sub"></param>
 		public static void Bind(MonoBehaviour sub)
 		{
-			sub.gameObject.AddComponent<SubscriberBinder>().Bind(sub as ISubscriber);
+			sub.gameObject.AddComponent<SubscriberBinder>().Bind(sub);
 		}
 
 		/// <summary>
@@ -73,9 +73,18 @@ namespace UnityTools.MessageSystem
 				throw new NullReferenceException($"{nameof(eventMessage)} is null. Publish failed");
 
 			// make a copy as subs may be removed from the OnPublished callback
-			foreach (var sub in _Subs.ToArray()) 
-				if (sub is ISubscriber<T> s)
-					s.OnPublished(eventMessage);
+			foreach (var sub in _Subs.ToArray())
+			{
+				switch (sub)
+				{
+					case MonoBehaviour m when !m:
+						Unsub(sub);
+						break;
+					case ISubscriber<T> s:
+						s.OnPublished(eventMessage);
+						break;
+				}
+			}
 		}
 	}
 }
