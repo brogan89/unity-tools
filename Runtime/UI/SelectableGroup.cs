@@ -54,7 +54,7 @@ namespace UnityTools.UI
 
 		private void OnEnable()
 		{
-			if (EventSystem.current.currentSelectedGameObject != gameObject)
+			if (EventSystem.current && EventSystem.current.currentSelectedGameObject != gameObject)
 				OnDeselect(null);
 		}
 
