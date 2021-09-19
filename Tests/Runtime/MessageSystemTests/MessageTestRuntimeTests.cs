@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityTools.MessageSystem;
@@ -6,8 +7,6 @@ using UnityTools.MessageSystem.Tests;
 
 namespace UnityTools.Tests
 {
-	// TODO: do more tests
-	
 	public class MessageTestRuntimeTests
 	{
 		// A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
@@ -15,37 +14,36 @@ namespace UnityTools.Tests
 		[UnityTest]
 		public IEnumerator MessageTestRuntimeTestsWithEnumeratorPasses()
 		{
-			CreateGameObjects();
+			// ReSharper disable once ObjectCreationAsStatement
+			var sub = new GameObject(nameof(TestSubscriber)).AddComponent<TestSubscriber>();
+			
+			// ReSharper disable once ObjectCreationAsStatement
 			new TestSub();
 			
 			yield return null;
 
-			EventMessage.Publish(new TestMessage {StringMessage = "Hello World!"});
-			EventMessage.Publish(new TestMessage2 {IntMessage = Time.frameCount});
-		}
+			Message.Publish(new TestMessage {StringMessage = "Hello World!"});
 
-		private static void CreateGameObjects()
-		{
-			new GameObject(nameof(TestSubscriber), typeof(TestSubscriber));
-			new GameObject(nameof(TestSubscriber2), typeof(TestSubscriber2));
+			// wait for test to done. If this isn't waited for then the coroutine message test will fail
+			yield return new WaitUntil(() => sub.IsDone);
+			
+			Debug.Log("MessageTestRuntimeTests complete");
 		}
 	}
 
-	public class TestSub : ISubscriber<TestMessage>, ISubscriber<TestMessage2>
+	public class TestSub
 	{
-		public TestSub()
+		[MessageCallback]
+		public void TestMessage(TestMessage message)
 		{
-			EventMessage.Sub(this);
+			Debug.Log($"TestSub::TestMessage message received: {message.StringMessage}");
 		}
 		
-		public void OnPublished(TestMessage message)
+		[MessageCallback]
+		public async void TestMessageAsync(TestMessage message)
 		{
-			Debug.Log($"TestSub message received: {message.StringMessage}");
-		}
-
-		public void OnPublished(TestMessage2 message)
-		{
-			Debug.Log($"TestSub message 2 received: {message.IntMessage}");
+			await Task.Delay(1000);
+			Debug.Log($"TestSub::TestMessageAsync message received: {message.StringMessage}");
 		}
 	}
 }

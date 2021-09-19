@@ -2,7 +2,8 @@
     "name": "UnityTools.MessageSystem",
     "rootNamespace": "UnityTools.MessageSystem",
     "references": [
-        "GUID:5934e0945d35bba4ea0fe4d1eee8473b"
+        "GUID:5934e0945d35bba4ea0fe4d1eee8473b",
+        "GUID:1491147abca9d7d4bb7105af628b223e"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

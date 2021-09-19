@@ -4,9 +4,4 @@
 	{
 		public string StringMessage { get; set; }
 	}
-	
-	public class TestMessage2 : IMessage
-	{
-		public int IntMessage { get; set; }
-	}
 }
