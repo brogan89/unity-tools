@@ -17,6 +17,9 @@ namespace UnityTools.Extensions
 		/// <param name="screenToWorld">Converts transform position from screen space to world space. Useful for pointing UI arrows at world targets</param>
 		public static void LookAt2D(this Transform transform, Vector2 targetPosition, float offsetDeg = 0, bool swapXAndY = false, bool screenToWorld = false)
 		{
+			if (!_MainCamera)
+				return;
+			
 			var pos = screenToWorld ? _MainCamera.ScreenToWorldPoint(transform.position) : transform.position;
 			
 			var dir = targetPosition - (Vector2)pos;

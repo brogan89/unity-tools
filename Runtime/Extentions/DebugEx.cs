@@ -4,7 +4,7 @@ using System.Threading;
 using UnityEngine;
 using UnityTools.Extensions;
 
-namespace UnityTools
+namespace UnityTools.Extensions
 {
 	/// <summary>
 	/// A Debug extension which adds class name to start of log to make it easier to filter in the console.
