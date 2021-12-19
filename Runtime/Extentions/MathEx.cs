@@ -25,5 +25,49 @@ namespace UnityTools.Extensions
 			return offsetValue - Mathf.Floor(offsetValue / width) * width + start;
 			// + start to reset back to start of original range
 		}
+		
+		/// <summary>
+		/// i = Returns index based on progress length,
+		/// t = Returns a value 0-1 between two given indexes based on total progress.
+		/// </summary>
+		/// <param name="progress"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public static (int i, float t) GetIndexAndLerpValue(float progress, int length)
+		{
+			// index
+			var p = (length - 1) * progress;
+			var i = Mathf.CeilToInt(p);
+			i = Mathf.Clamp(i, 0, length - 1);
+		
+			// lerp value
+			var t = progress * (length - 1) % 1f;
+			if (i == length - 1 && progress >= 1f)
+				t = 1;
+		
+			return (i, t);
+		}
+	
+		/// <summary>
+		/// Returns index based on progress length
+		/// </summary>
+		/// <param name="progress"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public static int GetIndex(float progress, int length)
+		{
+			return GetIndexAndLerpValue(progress, length).i;
+		}
+
+		/// <summary>
+		/// Returns a value 0-1 between two given indexes based on total progress.
+		/// </summary>
+		/// <param name="progress"></param>
+		/// <param name="length"></param>
+		/// <returns></returns>
+		public static float GetLerpValue(float progress, int length)
+		{
+			return GetIndexAndLerpValue(progress, length).t;
+		}
 	}
 }
