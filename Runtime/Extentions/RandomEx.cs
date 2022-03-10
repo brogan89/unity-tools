@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityTools.Extensions
 {
@@ -21,6 +22,12 @@ namespace UnityTools.Extensions
 				x = Random.Range(min.x, max.x),
 				y = Random.Range(min.y, max.y)
 			};
+		}
+
+		public static T GetRandom<T>(this IList<T> collection)
+		{
+			var randi = Random.Range(0, collection.Count);
+			return collection[randi];
 		}
 	}
 }
