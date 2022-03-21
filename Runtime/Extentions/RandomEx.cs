@@ -29,5 +29,27 @@ namespace UnityTools.Extensions
 			var randi = Random.Range(0, collection.Count);
 			return collection[randi];
 		}
+
+		public static void Shuffle<T>(this IList<T> list)
+		{
+			var rng = new System.Random();
+			var n = list.Count;
+			while (n > 1)
+			{
+				n--;
+				var k = rng.Next(n + 1);
+				var value = list[k];
+				list[k] = list[n];
+				list[n] = value;
+			}
+		}
+		
+		public static IList<T> ShuffleCopy<T>(this IEnumerable<T> list)
+		{
+			var newList = new List<T>();
+			newList.AddRange(list);
+			newList.Shuffle();
+			return newList;
+		}
 	}
 }
