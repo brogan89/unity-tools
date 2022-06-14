@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityTools
@@ -9,12 +10,16 @@ namespace UnityTools
 	/// </summary>
 	public class Debounce
 	{
+		private static readonly Dictionary<string, Debounce> _debounceMap = new();
+
 		private readonly MonoBehaviour _monoBehaviour;
 		private readonly Action _callback;
 
 		private float _debounceTime;
 		private float _currentTime;
 		private bool _isTriggered;
+
+		private Action OnDied; 
 
 		public Debounce(MonoBehaviour monoBehaviour, float debounceTime, Action callback)
 		{
@@ -50,6 +55,8 @@ namespace UnityTools
 				
 				yield return null;
 			}
+			
+			OnDied?.Invoke();
 		}
 
 		/// <summary>
@@ -59,6 +66,15 @@ namespace UnityTools
 		{
 			_isTriggered = false;
 			_currentTime = 0;
+		}
+
+		public static void DoDebounce(string key, MonoBehaviour monoBehaviour, float debounceTime, Action callback)
+		{
+			if (!_debounceMap.ContainsKey(key))
+				_debounceMap[key] = new Debounce(monoBehaviour, debounceTime, callback);
+			
+			_debounceMap[key].OnDied = () => _debounceMap.Remove(key);
+			_debounceMap[key].Ping();
 		}
 	}
 }
