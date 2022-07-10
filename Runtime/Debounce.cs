@@ -13,8 +13,8 @@ namespace UnityTools
 		private static readonly Dictionary<string, Debounce> _debounceMap = new();
 
 		private readonly MonoBehaviour _monoBehaviour;
-		private readonly Action _callback;
 
+		private Action _callback;
 		private float _debounceTime;
 		private float _currentTime;
 		private bool _isTriggered;
@@ -73,6 +73,7 @@ namespace UnityTools
 			if (!_debounceMap.ContainsKey(key))
 				_debounceMap[key] = new Debounce(monoBehaviour, debounceTime, callback);
 			
+			_debounceMap[key]._callback = callback; // need to keep updating the callback
 			_debounceMap[key].OnDied = () => _debounceMap.Remove(key);
 			_debounceMap[key].Ping();
 		}
